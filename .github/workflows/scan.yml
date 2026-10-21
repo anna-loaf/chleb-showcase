@@ -3,8 +3,7 @@
 name: Skan castingów (mail + FB)
 
 on:
-  schedule:
-    - cron: '0 5,10,17 * * *'
+  # Harmonogram wyłączony w kopii demonstracyjnej (brak sekretów). W prywatnej wersji działa z cron.
   workflow_dispatch: {} # ręczne uruchomienie: Actions → Skan castingów → Run workflow
 
 concurrency: scan

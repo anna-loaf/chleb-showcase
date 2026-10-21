@@ -3,8 +3,7 @@
 name: Wydarzenia (co tydzień)
 
 on:
-  schedule:
-    - cron: '0 5 * * 1'
+  # Harmonogram wyłączony w kopii demonstracyjnej (brak sekretów). W prywatnej wersji działa z cron.
   workflow_dispatch: {}
 
 permissions:
