@@ -1,0 +1,38 @@
+# Wydarzenia: raz w tygodniu, poniedziałek ok. 6:00–7:00 czasu polskiego. Lista na 2 tygodnie.
+# Zapisuje public/events.json do repo → Vercel sam wdraża nową wersję → apka pokazuje listę.
+name: Wydarzenia (co tydzień)
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency: events
+
+jobs:
+  events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/events.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+      - name: Zapisz listę w repo
+        run: |
+          git config user.name "chleb-bot"
+          git config user.email "chleb-bot@users.noreply.github.com"
+          git add public/events.json
+          git diff --cached --quiet || (git commit -m "Wydarzenia: aktualizacja tygodniowa" && git push)

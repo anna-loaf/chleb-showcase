@@ -1,0 +1,31 @@
+# Skan skrzynki castingowej 3× dziennie (rano / południe / wieczór czasu polskiego).
+# Cron jest w UTC: 5/10/17 UTC = 7/12/19 latem, 6/11/18 zimą. GitHub bywa spóźniony o kilka–kilkanaście minut.
+name: Skan castingów (mail + FB)
+
+on:
+  schedule:
+    - cron: '0 5,10,17 * * *'
+  workflow_dispatch: {} # ręczne uruchomienie: Actions → Skan castingów → Run workflow
+
+concurrency: scan
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/scan-mail.mjs
+        env:
+          CASTING_IMAP_USER: ${{ secrets.CASTING_IMAP_USER }}
+          CASTING_IMAP_APP_PASSWORD: ${{ secrets.CASTING_IMAP_APP_PASSWORD }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}

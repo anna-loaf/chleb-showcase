@@ -1,0 +1,21 @@
+# zależności i buildy
+node_modules/
+dist/
+dev-dist/
+coverage/
+
+# SEKRETY — nigdy w repo (klucz API, hasło dostępu, dane skrzynki castingowej)
+.env
+.env.*
+!.env.example
+
+# Vercel / system
+.vercel/
+.DS_Store
+*.log
+
+# lokalna konfiguracja narzędzi
+.claude/
+
+# dane z Apify (treści postów) — tylko lokalnie
+dane/
